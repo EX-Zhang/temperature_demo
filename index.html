@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+   <h1>Chizhou temperature</h1>
+   <script>
+      var getDate=new Date();
+var date_now=getDate.toLocaleDateString();
+
+document.write("Date: "+date_now);
+   </script>
+   <p>
+       <div id="container" style="height: 80%"></div>
+       <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript">
+   
+          var dom = document.getElementById("container");
+          var myChart = echarts.init(dom);
+          var app = {};
+
+          var hours=new Array();
+          var temps=new Array();
+
+          $.ajax({
+                  type: 'GET',
+                  url: 'https://www.tianqiapi.com/api/',
+                  data: 'version=v1&city=池州',
+                  dataType: 'JSON',
+                  async:false,
+                  error: function () {
+                      alert('网络错误');
+                  },
+                  success: function (res) {
+                      for (var i = 0; i < res.data[0].hours.length; i++) {
+                          hours[i]=res.data[0].hours[i].day.substring(3,5);
+                          temps[i]=parseFloat(res.data[0].hours[i].tem);
+                      }
+                  }
+              });
+
+          option = null;
+          option = {
+              xAxis: {
+                  name: 'Time',
+                  type: 'category',
+                  data: hours
+              },
+              yAxis: {
+                  name: 'Temperature ℃',
+                  type: 'value'
+              },
+              series: [{
+                  label: {
+                    show: true
+                    },
+                  data: temps,
+                  type: 'line'
+              }]
+          };
+          ;
+          if (option && typeof option === "object") {
+              myChart.setOption(option, true);
+          }
+       </script>
+   </body>
+</html>
